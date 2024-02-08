@@ -5,7 +5,11 @@ const isProduction =
   process.env.NODE_ENV === "production" || process.env.CI === "true";
 
 export default defineConfig({
-  entry: ["src/index.ts"],
+  entry: {
+    index: "src/index.ts",
+    options: "src/options.ts",
+    utils: "src/utils.ts",
+  },
   format: ["cjs", "esm"],
   treeshake: true,
   clean: true,

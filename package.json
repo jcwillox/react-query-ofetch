@@ -64,6 +64,26 @@
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
       }
+    },
+    "./options": {
+      "import": {
+        "types": "./dist/options.d.ts",
+        "default": "./dist/options.js"
+      },
+      "require": {
+        "types": "./dist/options.d.cts",
+        "default": "./dist/options.cjs"
+      }
+    },
+    "./utils": {
+      "import": {
+        "types": "./dist/utils.d.ts",
+        "default": "./dist/utils.js"
+      },
+      "require": {
+        "types": "./dist/utils.d.cts",
+        "default": "./dist/utils.cjs"
+      }
     }
   },
   "publishConfig": {
