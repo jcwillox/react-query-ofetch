@@ -80,6 +80,7 @@ export function fetchQueryFn<T = any>(
     queryKey: [url, options = {}],
     signal,
     pageParam,
+    meta,
   }: FetchQueryFunctionContext,
   ofetch_: $Fetch = ofetch,
 ) {
@@ -90,7 +91,14 @@ export function fetchQueryFn<T = any>(
   url = replacePathParams(url, options.path);
   if (typeof pageParam === "number")
     options = { ...options, query: { ...options.query, page: pageParam } };
-  return ofetch_<T>(url, { signal, retry: false, ...options });
+  return ofetch_<T>(url, {
+    signal,
+    // let react query handle refetching
+    retry: false,
+    ...options,
+    // forcefully merge in queryMeta to options
+    ...({ queryMeta: meta } as any),
+  });
 }
 
 /** Returns a `mutationFn` with variables bound to the request body, this the default behaviour. */
