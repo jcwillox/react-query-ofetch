@@ -1,5 +1,5 @@
 import { DataTag, QueryFunctionContext } from "@tanstack/react-query";
-import { $Fetch, FetchOptions, ofetch } from "ofetch";
+import { $Fetch, FetchError, FetchOptions, ofetch } from "ofetch";
 import type { $URL } from "ufo";
 import { FetchMutationFunction, FetchMutationHelpers } from "@/mutation.ts";
 
@@ -25,6 +25,17 @@ export type FetchQueryFunctionContext<
 > = Partial<Omit<QueryFunctionContext<TQueryKey, TPageParam>, "queryKey">> &
   Pick<QueryFunctionContext<TQueryKey, TPageParam>, "queryKey">;
 
+const retryStatusCodes = new Set([
+  408, // Request Timeout
+  409, // Conflict
+  425, // Too Early
+  429, // Too Many Requests
+  500, // Internal Server Error
+  502, // Bad Gateway
+  503, // Service Unavailable
+  504, // Gateway Timeout
+]);
+
 function replacePathParams(
   url: string | URL | $URL,
   path?: Record<string, unknown>,
@@ -44,6 +55,23 @@ export function sliceKey<T = unknown, TData = unknown>(
   end?: number,
 ) {
   return queryKey.slice(start, end) as DataTag<T[], TData>;
+}
+
+/**
+ * A function that returns true if a fetch error should be retried.
+ *
+ * @returns undefined if the error is not a fetch error otherwise a boolean
+ */
+export function shouldRetryFetch(error: Error): boolean | undefined {
+  if (error instanceof FetchError) {
+    return !!(error.status && retryStatusCodes.has(error.status));
+  }
+}
+
+/** A custom retry function for react query to intelligently handle fetch errors */
+export function fetchRetryFn(failureCount: number, error: Error): boolean {
+  if (shouldRetryFetch(error) === false) return false;
+  return failureCount < 3;
 }
 
 /** Adapter between the react-query fn and ofetch */
