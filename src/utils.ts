@@ -1,4 +1,5 @@
 import { DataTag, QueryFunctionContext } from "@tanstack/react-query";
+import deepmerge from "deepmerge";
 import { $Fetch, FetchError, FetchOptions, ofetch } from "ofetch";
 import type { $URL } from "ufo";
 import { FetchMutationFunction, FetchMutationHelpers } from "@/mutation.ts";
@@ -109,7 +110,12 @@ export function fetchMutateFn<T = any>(
   return async <TVariables = FetchQueryFetchOptions>(variables: TVariables) => {
     return await fetchQueryFn_<T>({
       // merge in variables with default options
-      queryKey: [mutationKey[0], { ...mutationKey[1], ...variables }] as const,
+      queryKey: [
+        mutationKey[0],
+        deepmerge(mutationKey[1] ?? {}, variables ?? {}, {
+          arrayMerge: (_, b) => b,
+        }),
+      ] as const,
     });
   };
 }
