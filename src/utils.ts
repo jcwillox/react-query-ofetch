@@ -1,5 +1,6 @@
 import { DataTag, QueryFunctionContext } from "@tanstack/react-query";
 import deepmerge from "deepmerge";
+import isPlainObject from "is-plain-obj";
 import { $Fetch, FetchError, FetchOptions, ofetch } from "ofetch";
 import type { $URL } from "ufo";
 import { FetchMutationFunction, FetchMutationHelpers } from "@/mutation.ts";
@@ -114,6 +115,7 @@ export function fetchMutateFn<T = any>(
         mutationKey[0],
         deepmerge(mutationKey[1] ?? {}, variables ?? {}, {
           arrayMerge: (_, b) => b,
+          isMergeableObject: isPlainObject,
         }),
       ] as const,
     });
