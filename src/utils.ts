@@ -2,7 +2,6 @@ import { DataTag, QueryFunctionContext } from "@tanstack/react-query";
 import deepmerge from "deepmerge";
 import isPlainObject from "is-plain-obj";
 import { $Fetch, FetchError, FetchOptions, ofetch } from "ofetch";
-import type { $URL } from "ufo";
 import { FetchMutationFunction, FetchMutationHelpers } from "@/mutation.ts";
 
 interface ResponseMap {
@@ -18,8 +17,8 @@ export type FetchQueryFetchOptions<R extends ResponseType = "json"> =
   FetchOptions<R> & { path?: Record<string, unknown> };
 
 export type FetchQueryKey<R extends ResponseType = "json"> =
-  | readonly [string | URL | $URL]
-  | readonly [string | URL | $URL, FetchQueryFetchOptions<R>];
+  | readonly [string | URL]
+  | readonly [string | URL, FetchQueryFetchOptions<R>];
 
 export type FetchQueryFunctionContext<
   TQueryKey extends FetchQueryKey = FetchQueryKey,
@@ -39,10 +38,10 @@ const retryStatusCodes = new Set([
 ]);
 
 function replacePathParams(
-  url: string | URL | $URL,
+  url: string | URL,
   path?: Record<string, unknown>,
 ): string {
-  url = url.toString();
+  url = url instanceof URL ? decodeURI(url.toString()) : url;
   if (!path) return url;
   for (const [key, value] of Object.entries(path)) {
     url = url.replaceAll(`{${key}}`, String(value));
