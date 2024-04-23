@@ -52,7 +52,10 @@ export function useFetchMutation<
     const [url, fetchOptions = {}] = options.mutationKey;
     fetchOptions.method ??= "POST";
     // bind mutation fn to key and inherited query fn
-    const boundMutationFn = mutationFn([url, fetchOptions], queryFn);
+    const boundMutationFn = mutationFn(
+      { queryKey: [url, fetchOptions], meta: options.meta },
+      queryFn,
+    );
     return {
       ...options,
       mutationFn: (variables: TVariables) => {

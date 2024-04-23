@@ -104,7 +104,7 @@ export function fetchQueryFn<T = any>(
 
 /** Returns a `mutationFn` with variables bound to the request body, this the default behaviour. */
 export function fetchMutateFn<T = any>(
-  mutationKey: FetchQueryKey,
+  { queryKey: mutationKey, ...ctx }: FetchQueryFunctionContext,
   fetchQueryFn_ = fetchQueryFn,
 ) {
   return async <TVariables = FetchQueryFetchOptions>(variables: TVariables) => {
@@ -117,6 +117,7 @@ export function fetchMutateFn<T = any>(
           isMergeableObject: isPlainObject,
         }),
       ] as const,
+      ...ctx,
     });
   };
 }
