@@ -23,7 +23,9 @@ export type FetchQueryKey<R extends ResponseType = "json"> =
 export type FetchQueryFunctionContext<
   TQueryKey extends FetchQueryKey = FetchQueryKey,
   TPageParam = unknown,
-> = Partial<Omit<QueryFunctionContext<TQueryKey, TPageParam>, "queryKey">> &
+> = Partial<
+  Omit<QueryFunctionContext<TQueryKey, TPageParam>, "queryKey" | "direction">
+> &
   Pick<QueryFunctionContext<TQueryKey, TPageParam>, "queryKey">;
 
 const retryStatusCodes = new Set([
