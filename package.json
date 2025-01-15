@@ -47,8 +47,8 @@
   "peerDependencies": {
     "@tanstack/react-query": "^5.17.0",
     "ofetch": "^1.3.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
   },
   "main": "dist/index.cjs",
   "module": "dist/index.js",
